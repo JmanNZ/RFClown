@@ -1,0 +1,79 @@
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define SCREEN_W 128
+#define SCREEN_H 64
+
+// ---------- Pins ----------
+#define PIN_BTN_L 27
+#define PIN_BTN_R 25
+#define PIN_BTN_S 26
+// nRF24-specific Pins
+#define NRF_CE_PIN_A 5
+#define NRF_CSN_PIN_A 17
+#define NRF_CE_PIN_B 16
+#define NRF_CSN_PIN_B 4
+#define NRF_CE_PIN_C 15
+#define NRF_CSN_PIN_C 2
+
+#include "setting.h"
+#include <Arduino.h>
+#include <U8g2lib.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <Adafruit_NeoPixel.h>
+#include <vector>
+#include <string>
+#include <math.h>
+
+extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
+extern Adafruit_NeoPixel pixels;
+
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+#include <WiFi.h>
+#include <esp_wifi.h>
+#include <esp_wifi_types.h>
+#include <esp_system.h>
+#include <esp_event.h>
+#include <nvs_flash.h>
+#include <esp_bt.h>
+
+static const uint8_t* FONT_SMALL         = u8g2_font_5x8_tf;
+static const uint8_t* FONT_MEDIUM        = u8g2_font_6x12_tf;
+static const uint8_t* FONT_ICON_FALLBACK = u8g2_font_open_iconic_thing_2x_t;
+
+// Operation state
+enum OperationMode {WiFi_MODULE, VIDEO_TX_MODULE, RC_MODULE, BLE_MODULE, Bluetooth_MODULE, USB_WIRELESS_MODULE, ZIGBEE_MODULE, NRF24_MODULE};
+extern OperationMode current_Mode;
+
+enum Operation {DEACTIVE_MODE, ACTIVE_MODE};
+extern volatile Operation current;
+
+// Non-const groups (defined in .ino)
+extern byte channelGroup_1[];
+extern byte channelGroup_2[];
+extern byte channelGroup_3[];
+
+// Const per-mode lists (safe to keep in header)
+const byte bluetooth_channels[]        = {32,34,46,48,50,52, 0,1,2,4,6,8, 22,24,26,28,30, 74,76,78,80};
+const byte ble_channels[]              = {2,26,80};
+const byte WiFi_channels[]             = {1,2,3,4,5,6,7,8,9,10,11,12};
+const byte usbWireless_channels[]      = {40,50,60};
+const byte videoTransmitter_channels[] = {70,75,80};
+const byte rc_channels[]               = {1,3,5,7};
+const byte zigbee_channels[]           = {11,15,20,25};
+const byte nrf24_channels[]            = {76,78,79};
+
+// Button/flags
+extern volatile bool ChangeRequested;
+extern volatile bool ChangeRequested1;
+extern volatile bool ChangeRequested2;
+extern unsigned long lastPressTime;
+const unsigned long debounceDelay = 500; // per user preference
+
+#endif // CONFIG_H
